@@ -17,7 +17,7 @@ const Sort = () => {
       <div className="sort__select">
         <p>Select Your Distance</p>
         <img src={down} alt="Dropdown" />
-      </div>
+      </div>      
     </div>
   );
 }

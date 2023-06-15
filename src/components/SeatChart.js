@@ -10,24 +10,24 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
   const [seatsTaken, setSeatsTaken] = useState(false)
   const [hasSold, setHasSold] = useState(false)
 
-  const getSeatsTaken = async () => {
-    const seatsTaken = await tokenMaster.getSeatsTaken(occasion.id)
-    setSeatsTaken(seatsTaken)
-  }
-
-  const buyHandler = async (_seat) => {
+  const buyHandler = async (_seats) => {
     setHasSold(false)
 
     const signer = await provider.getSigner()
-    const transaction = await tokenMaster.connect(signer).mint(occasion.id, _seat, { value: occasion.cost })
+    const transaction = await tokenMaster.connect(signer).mint(occasion.id, _seats, { value: occasion.cost * _seats.length })
     await transaction.wait()
 
     setHasSold(true)
   }
 
   useEffect(() => {
+    const getSeatsTaken = async () => {
+      const seatsTaken = await tokenMaster.getSeatsTaken(occasion.id)
+      setSeatsTaken(seatsTaken)
+    }
+
     getSeatsTaken()
-  }, [hasSold])
+  }, [hasSold, tokenMaster, occasion.id])
 
   return (
     <div className="occasion">
@@ -52,6 +52,7 @@ const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
             maxRows={5}
             seatsTaken={seatsTaken}
             buyHandler={buyHandler}
+            maxTickets={4}
             key={i}
           />
         )}
